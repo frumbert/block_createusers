@@ -29,7 +29,7 @@ $string['configtitle'] = 'createusers block title';
 
 $string['createusers:addinstance'] = 'Add a new createusers block';
 $string['createusers:myaddinstance'] = 'Add a new createusers block to Dashboard';
-$string['newcreateusersblock'] = '(new createusers block)';
+$string['newcreateusersblock'] = 'Create Users';
 $string['pluginname'] = 'createusers';
 $string['search:content'] = 'createusers block content';
 $string['privacy:metadata:block'] = 'This block contains no user identifiable data.';
