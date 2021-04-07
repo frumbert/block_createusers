@@ -1,0 +1,30 @@
+.block-createusers-dataentry table {
+	width: 100%;
+	border: none;
+	border-collapse: collapse;
+}
+
+.block-createusers-dataentry label {
+	display: block;
+}
+
+.block-createusers-dataentry tbody td {
+	width: 25%;
+}
+
+.block-createusers-dataentry tbody input {
+	border: 1px solid #d7dfe3;
+	background-color: white;
+	margin: 0;
+	box-shadow: none;
+	padding: .25rem;
+	width: 100%;
+}
+
+.block-createusers-dataentry label input {
+	margin-right: 1rem;	
+}
+
+.block-createusers-action {
+	margin-top: 1.5rem;
+}
