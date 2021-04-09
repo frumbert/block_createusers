@@ -66,30 +66,28 @@ try {
     	$email = trim($email);
 
     	$create = true;
-    	$error = [];
+    	$code = 0;
 
     	if (empty($email)) {
-    		$error[] = 1;
+    		$code = -1;
     		$create = false;
-    	}
-
-    	if (!validate_email($email)) {
-    		$error[] = 2;
+    	} else if (!validate_email($email)) {
+    		$code = -2;
     		$create = false;
     	}
 
 		if ($DB->record_exists('user', array('email' => $email, 'mnethostid' => $CFG->mnet_localhost_id))) {
 			$create = false;
-			$error[] = 3;
+			$code = -3;
 		}
 
     	if (empty($firstname)) {
-    		$error[] = 4;
+    		$code = -4;
     		$create = false;
     	}
 
     	if (empty($lastname)) {
-    		$error[] = 5;
+    		$code = -5;
     		$create = false;
     	}
 
@@ -101,14 +99,14 @@ try {
     		$user->email = $email;
     		$user->institution = $organisation;
     		user_update_user($user, false, false); 
+    		$code = 1;
 
     		$userid = $user->id;
 
     		if ($notify) {
 				setnew_password_and_mail($user);
+				$code = 2;
     		}
-
-    		$error[] = 0;
 
 			if ($doenrol) {
 				$manualenrol->enrol_user($enrolinstance, $userid, $roleid); // enrol the user
@@ -170,7 +168,7 @@ try {
 	    }
 		$out[] = [
 			"email" => $email,
-			"code" => $error,	
+			"code" => $code,	
 		];
     }
     echo json_encode($out);

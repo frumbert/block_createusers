@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery'], function($) {
+define(['jquery', 'core/templates', 'core/notification'], function($, templates, notification) {
 	var t = {
 		init: function(ref) {
 			ref.on("submit", t.submit);
@@ -54,13 +54,41 @@ define(['jquery'], function($) {
 		create: function(r) {
 			$("button", r).addClass("btn-primary"); // we know if this js is working as the button gets a new classname
 		},
+		notify: function(elem, type, message) {
+			templates.render('block_createusers/feedback', {
+				message: message,
+				type: type
+			}).then(function(html,js) {
+				templates.appendNodeContents($('.block-createusers-feedback',elem)[0], html, js);
+			}).fail(notification.exception);
+		},
 		submit: function(e) {
-			console.dir(e);
-			$tgt = $(e.target);
+			var $tgt = $(e.target);
 			$.post($tgt.attr("action"), $tgt.serialize())
 			.done(function(result) {
 				$tgt.trigger("reset"); // return form to initial state
 				$("tbody>tr", $tgt).slice(1).remove(); // return to a single row
+				[].forEach.call(result, function(v) {
+					if (v.email === "") return; // continue
+					var type = (v.code < 1) ? "warning" : "success",
+						message = v.email;
+
+					if (v.code === -3) {
+						message += ' already exists';
+					} else if (v.code === -4 || v.code === -5) {
+						message += ' skipped (firstname or lastame not included)';
+					} else if (v.code === -2) {
+						message +=' was not considered valid by Moodle';
+					} else if (v.code === 1) {
+						message += ' was created';
+					} else if (v.code === 2) {
+						message += ' was created and notified';
+					} else {
+						message = 'Response was not understood: ' + JSON.stringify(v);
+						type = 'danger';
+					}
+					t.notify($tgt, type, message);
+				});
 			})
 			.fail(function(message) {
 				console.warn(message); // probably a bad sesskey
